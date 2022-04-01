@@ -1,0 +1,51 @@
+version: 1.0
+deploy:
+
+  # configuration part, which is taken at the FIRST deployment of each branch
+  bootstrap:
+    # folders that are not copied to IONOS webspace
+    excludes:
+      - tests
+      - node_modules
+      # the following three files are generated during composer action and are not neccessary
+      - DOCKER_ENV
+      - docker_tag
+      - output.log
+    # commands that are executed at the real webspace NOT at build servers AFTER copying new files
+    post-deployment-remote-commands:
+      # set right file permissions for Laravel
+      - find $(pwd) -type f -not -path "$(pwd)/logs/*" -exec chmod 664 {} \;
+      - find $(pwd) -type d -not -name "logs" -exec chmod 775 {} \;
+      - chmod -R o+w storage bootstrap/cache
+      # migrate database, clear caches, migrate database, link storage, warmup caches
+      - php artisan migrate --force
+      - php artisan optimize:clear
+      - php artisan migrate --force -n
+      - php artisan storage:link
+      - php artisan optimize
+      - php artisan up
+
+  # configuration part, which is taken at ALL FURTHER deployments of this branch
+  recurring:
+    excludes:
+      - tests
+      - node_modules
+      - DOCKER_ENV
+      - docker_tag
+      - output.log
+      # the storage folder shouldn't be synced after first deployment, because there
+      # are files inside from running the Laravel app (e.g. database)
+      - storage
+    # commands that are executed at the real webspace NOT at build servers BEFORE copying new files
+    pre-deployment-remote-commands:
+      - php artisan down
+    post-deployment-remote-commands:
+      - find $(pwd) -type f -not -path "$(pwd)/logs/*" -exec chmod 664 {} \;
+      - find $(pwd) -type d -not -name "logs" -exec chmod 775 {} \;
+      - chmod -R o+w storage bootstrap/cache
+      - php artisan migrate --force
+      - php artisan optimize:clear
+      - php artisan migrate --force -n
+      - php artisan storage:link
+      - php artisan optimize
+      - php artisan up
