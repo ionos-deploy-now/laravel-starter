@@ -1,5 +1,7 @@
 # Laravel Sample for Deploy Now
 
+This is a basic Laravel website including tailwaind css, built with composer and node. You can use it as a starting point for your project or to give [Deploy Now](https://www.ionos.com/hosting/deploy-now) a try.
+
 ## How to deploy it 
 
 1. [Sign in or sign up](https://ionos.space/sign-up) for Deploy Now
