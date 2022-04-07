@@ -1,9 +1,12 @@
 version: 1.0
 deploy:
+  # comment in one of the following lines to force the use of the recurring or bootstrap configuration
+#  force: recurring
+#  force: bootstrap
 
-  # configuration part, which is taken at the FIRST deployment of each branch
+  # configure the initial deployment of each branch
   bootstrap:
-    # folders that are not copied to IONOS webspace
+    # directories that are not overwritten or removed by the next deployment
     excludes:
       - tests
       - node_modules
@@ -11,7 +14,8 @@ deploy:
       - DOCKER_ENV
       - docker_tag
       - output.log
-    # commands that are executed at the real webspace NOT at build servers AFTER copying new files
+      
+    # commands that are executed on the runtime after new files are copied
     post-deployment-remote-commands:
       # set right file permissions for Laravel
       - find $(pwd) -type f -not -path "$(pwd)/logs/*" -exec chmod 664 {} \;
@@ -25,8 +29,9 @@ deploy:
       - php artisan optimize
       - php artisan up
 
-  # configuration part, which is taken at ALL FURTHER deployments of this branch
+  # configure all following deployments of each branch
   recurring:
+    # directories that are not overwritten or removed by the next deployment
     excludes:
       - tests
       - node_modules
@@ -36,9 +41,12 @@ deploy:
       # the storage folder shouldn't be synced after first deployment, because there
       # are files inside from running the Laravel app (e.g. database)
       - storage
-    # commands that are executed at the real webspace NOT at build servers BEFORE copying new files
+      
+    # commands that are executed on the runtime before new files are copied
     pre-deployment-remote-commands:
       - php artisan down
+      
+    # commands that are executed on the runtime after new files are copied  
     post-deployment-remote-commands:
       - find $(pwd) -type f -not -path "$(pwd)/logs/*" -exec chmod 664 {} \;
       - find $(pwd) -type d -not -name "logs" -exec chmod 775 {} \;
