@@ -36,7 +36,7 @@
                         </g>
                     </svg>
                     <div class="flex-shrink-0 flex-grow flex text-3xl text-white ml-8 items-center">
-                        <a href="https://www.ionos.de/hosting/deploy-now" class="flex flex-shrink-0 flex-grow" target="_blank">
+                        <a href="https://deploynow.space/" class="flex flex-shrink-0 flex-grow" target="_blank">
                             <div>up and running on</div>
                             <img src="https://ionos.space/images/ionos_deploynow.svg" class="ml-4" style="max-height: 30px;" alt="IONOS logo" />
                         </a>
